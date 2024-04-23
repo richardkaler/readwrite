@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Copyright 2024 Richard Kaler 
+
+# This script is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or (at
+# your option) any later version.
+
+# This script is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+#This script might save you a lot of time, which is why I wrote it. I have found that this script is effective in most cases - and involves two simple 
+#permission granting commands: chown and chmod. I didn't spend a lot of time on comments here - mostly because if you're using this, you're using it as an adjunct 
+#to your already expansive toolset and not as a primary tool. 
+
+read -rp "Logged in as \"$USER\". This script will grant you read and write permissions 
+for a directory with limiting access. Continue: \"yes\" or \"no\": " ans 
+
+if [[ "$ans" == "yes" ]]; then 
+    echo OK - continuing 
+else 
+    echo OK - exiting script 
+    exit 0 
+fi
+
+has_permissions() { 
+sudo -l /usr/bin/chown &>/dev/null && 
+    sudo -l /usr/bin/chmod &>/dev/null 
+}
+if has_permissions; then 
+    echo "User has sufficient permissions to execute script - continuing now"
+else
+    echo "Abort! User $USER lacks sufficent permissions to run script. Exiting now" 
+    exit 1 
+fi
+
+if [[ -z "$1" ]]; then 
+    echo "Error, please provide an argument - a directory to change permissions on." 
+    echo "Ex: \"readwrite /media/dir\""
+    exit 1 
+fi
+
+if [[ -d "$1" ]]; then 
+    sudo chmod 755 "$1" || { echo "failed to change permissions" ; exit 1; }
+    sudo chown -R "$USER:$USER" "$1" || { echo "failed to change ownership of $1"; exit 1; }
+    echo finished processing script 
+    exit 0 
+else 
+    echo "Error! Path: $1 is not a directory - try something else" 
+    echo "exiting script" 
+    exit 1 
+fi
