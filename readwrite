@@ -33,7 +33,7 @@ sudo -l /usr/bin/chown &>/dev/null &&
 if has_permissions; then 
     echo "User has sufficient permissions to execute script - continuing now"
 else
-    echo "Abort! User $USER lacks sufficent permissions to run script. Exiting now" 
+    echo "Abort! User $USER has insufficent permissions to run script. Exiting now" 
     exit 1 
 fi
 
@@ -49,7 +49,7 @@ if [[ -d "$1" ]]; then
     echo finished processing script 
     exit 0 
 else 
-    echo "Error! Path: $1 is not a directory - try something else" 
+    echo "Error! $1 is not a directory - try something else" 
     echo "exiting script" 
     exit 1 
 fi
